@@ -1,6 +1,6 @@
 //------------------------------------------------------
 // Homework 1
-// Written by: (your name and student ID)
+// Written by: Corwyn Lail 23805366
 // ECE 373 Object-Oriented Software Design, Section 001 - Fall 2026
 // The University of Arizona
 //------------------------------------------------------
@@ -33,14 +33,28 @@ public class BoolMatrixPrinter extends MatrixOutlinePrinter {
      * Renders one row as its cell values.
      *
      * @param matrix the matrix being printed, never {@code null}
-     * @param row    the index of the row to render
+     * @param row the index of the row to render
      * @return one character per column, {@code '0'} or {@code '1'}
-     * @throws IllegalArgumentException if any cell of the row holds a value other than 0 or 1
+     * @throws IllegalArgumentException if any cell of the row holds a value
+     *                                  other than 0 or 1
      */
     @Override
     protected String printRow(Matrix matrix, int row) {
-        // TODO: walk the columns of this row; throw IllegalArgumentException if a cell holds
-        // TODO: anything other than 0 or 1, otherwise append DEAD or ALIVE.
-        throw new UnsupportedOperationException("TODO");
+        StringBuilder result = new StringBuilder();
+
+        for (int column = 0; column < matrix.getColumns(); column++) {
+            int value = matrix.get(row, column);
+
+            if (value == 0) {
+                result.append(DEAD);
+            } else if (value == 1) {
+                result.append(ALIVE);
+            } else {
+                throw new IllegalArgumentException(
+                        "Boolean matrix cells must contain only 0 or 1.");
+            }
+        }
+
+        return result.toString();
     }
 }
