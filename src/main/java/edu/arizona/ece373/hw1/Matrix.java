@@ -24,7 +24,7 @@ public class Matrix {
      * @param columns the number of columns, at least 1
      * @throws IllegalArgumentException if either dimension is less than 1
      */
-    public Matrix(int rows, int columns) {
+    public Matrix(final int rows, final int columns) {
         if (rows < 1 || columns < 1) {
             throw new IllegalArgumentException(
                     "Rows and columns must be at least 1.");
@@ -92,7 +92,7 @@ public class Matrix {
      * @return the value stored at that cell
      * @throws IndexOutOfBoundsException if the coordinate is invalid
      */
-    public int get(int row, int column) {
+    public int get(final int row, final int column) {
         checkBounds(row, column);
         return data[row][column];
     }

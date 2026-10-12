@@ -9,8 +9,8 @@ package edu.arizona.ece373.hw1;
 /**
  * Prints a matrix whose cells are only {@code 0} or {@code 1}, values and all.
  *
- * <p>A 2x4 matrix whose two rows both hold {@code 0, 0, 1, 0} must render as</p>
- *
+ * <p>A 2x4 matrix whose two rows both hold
+ * {@code 0, 0, 1, 0} must render as</p>
  * <pre>
  * +----+
  * |0010|
@@ -39,7 +39,7 @@ public class BoolMatrixPrinter extends MatrixOutlinePrinter {
      *                                  other than 0 or 1
      */
     @Override
-    protected String printRow(Matrix matrix, int row) {
+    protected String printRow(final Matrix matrix, int row) {
         StringBuilder result = new StringBuilder();
 
         for (int column = 0; column < matrix.getColumns(); column++) {
