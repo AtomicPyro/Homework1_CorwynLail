@@ -1,6 +1,6 @@
 //------------------------------------------------------
 // Homework 1
-// Written by: (your name and student ID)
+// Written by: Corwyn Lail 23805366
 // ECE 373 Object-Oriented Software Design, Section 001 - Fall 2026
 // The University of Arizona
 //------------------------------------------------------
@@ -10,16 +10,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link GameOfLife} (Task 4).
  *
- * <p>The handout asks for a game initialized with a Blinker and a Glider that is checked after
- * one step and after ten steps. Those two tests are supplied and are used for grading, so your
- * printer must produce exactly the strings below. The {@code @Disabled} methods are yours.</p>
+ * <p>Tests verify expected generations, shape placement validation,
+ * still-life behavior, and underpopulation.</p>
  */
 class GameOfLifeTest {
 
@@ -41,6 +39,7 @@ class GameOfLifeTest {
     @DisplayName("after one step the game field changed as expected")
     void fieldAfterOneStep() {
         game.step();
+
         String expected = ""
                 + "+------------+\n"
                 + "|001000000000|\n"
@@ -56,6 +55,7 @@ class GameOfLifeTest {
                 + "|000000000000|\n"
                 + "|000000000000|\n"
                 + "+------------+\n";
+
         assertEquals(expected, printer.print(game));
     }
 
@@ -65,6 +65,7 @@ class GameOfLifeTest {
         for (int i = 0; i < 10; i++) {
             game.step();
         }
+
         String expected = ""
                 + "+------------+\n"
                 + "|000000000000|\n"
@@ -80,6 +81,7 @@ class GameOfLifeTest {
                 + "|000000001100|\n"
                 + "|000000000000|\n"
                 + "+------------+\n";
+
         assertEquals(expected, printer.print(game));
     }
 
@@ -87,23 +89,52 @@ class GameOfLifeTest {
     @DisplayName("addShape rejects a shape that does not fit on the field")
     void addShapeRejectsShapesThatDoNotFit() {
         GameOfLife small = new GameOfLife(5, 5);
-        assertThrows(IllegalArgumentException.class, () -> small.addShape(Shape.glider(), 3, 0));
-        assertThrows(IllegalArgumentException.class, () -> small.addShape(Shape.glider(), 0, 3));
-        assertThrows(IllegalArgumentException.class, () -> small.addShape(Shape.glider(), -1, 0));
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> small.addShape(Shape.glider(), 3, 0));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> small.addShape(Shape.glider(), 0, 3));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> small.addShape(Shape.glider(), -1, 0));
     }
 
     @Test
-    @Disabled("TODO: remove this annotation once you have written the test")
     @DisplayName("a still life does not change")
     void stillLifeDoesNotChange() {
-        // TODO: place a Beehive or a Boat on a field big enough that it does not touch the edge,
-        // TODO: remember the printed field, run a few steps, and check that nothing changed.
+        GameOfLife stillLife = new GameOfLife(6, 6);
+        stillLife.addShape(Shape.beehive(), 1, 1);
+
+        String original = printer.print(stillLife);
+
+        for (int i = 0; i < 5; i++) {
+            stillLife.step();
+        }
+
+        assertEquals(original, printer.print(stillLife));
     }
 
     @Test
-    @Disabled("TODO: remove this annotation once you have written the test")
     @DisplayName("a lone live cell dies of underpopulation")
     void loneCellDies() {
-        // TODO: switch a single cell on, call step once, and check that the field is empty.
+        GameOfLife singleCell = new GameOfLife(3, 3);
+        singleCell.setData(new int[][] {
+                {0, 0, 0},
+                {0, 1, 0},
+                {0, 0, 0},
+        });
+
+        singleCell.step();
+
+        String expected = ""
+                + "+---+\n"
+                + "|000|\n"
+                + "|000|\n"
+                + "|000|\n"
+                + "+---+\n";
+
+        assertEquals(expected, printer.print(singleCell));
     }
 }
