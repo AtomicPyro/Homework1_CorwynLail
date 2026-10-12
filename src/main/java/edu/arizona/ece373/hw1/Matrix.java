@@ -1,6 +1,6 @@
 //------------------------------------------------------
 // Homework 1
-// Written by: (your name and student ID)
+// Written by: Corwyn Lail 23805366
 // ECE 373 Object-Oriented Software Design, Section 001 - Fall 2026
 // The University of Arizona
 //------------------------------------------------------
@@ -9,105 +9,158 @@ package edu.arizona.ece373.hw1;
 /**
  * A rectangular, mutable matrix of {@code int} values.
  *
- * <p>Task 1 of the homework. The array of cells must stay {@code private}: everything outside
- * this class reaches the cells through the methods below.</p>
+ * <p>The array of cells is private. External classes access cells
+ * through the public methods provided by this class.</p>
  */
 public class Matrix {
 
-    // TODO: declare the private field `data` holding a two-dimensional array of int.
+    /** The cells stored in this matrix. */
+    private int[][] data;
 
     /**
-     * Creates a matrix of the given size whose cells are all zero.
+     * Creates a zero-filled matrix of the given size.
      *
-     * @param rows    the number of rows, must be at least 1
-     * @param columns the number of columns, must be at least 1
-     * @throws IllegalArgumentException if {@code rows} or {@code columns} is less than 1
+     * @param rows the number of rows, at least 1
+     * @param columns the number of columns, at least 1
+     * @throws IllegalArgumentException if either dimension is less than 1
      */
     public Matrix(int rows, int columns) {
-        // TODO: check that rows >= 1 and columns >= 1 (IllegalArgumentException otherwise),
-        // TODO: then allocate the array field with that many rows and columns.
-        throw new UnsupportedOperationException("TODO");
+        if (rows < 1 || columns < 1) {
+            throw new IllegalArgumentException(
+                    "Rows and columns must be at least 1.");
+        }
+
+        data = new int[rows][columns];
     }
 
     /**
-     * Creates a matrix that holds the given two-dimensional array of cells.
+     * Creates a matrix containing a copy of the given array.
      *
-     * @param data the cells, must be non-null, rectangular and at least 1x1
-     * @throws IllegalArgumentException if {@code data} is {@code null}, has no rows, has no
-     *                                  columns, has a {@code null} row, or is jagged
+     * @param data the initial matrix values
+     * @throws IllegalArgumentException if the array is null, empty,
+     *         contains a null row, or is not rectangular
      */
     public Matrix(int[][] data) {
-        // TODO: validate the argument (not null, at least 1 row, at least 1 column,
-        // TODO: every row the same length) and store it in the field.
-        throw new UnsupportedOperationException("TODO");
+        validateData(data);
+        this.data = copyData(data);
     }
 
     /**
-     * Returns the cells of this matrix.
+     * Returns a copy of the matrix cells.
      *
-     * @return the current values, {@code result[row][column]}
+     * @return a deep copy of the current values
      */
     public int[][] getData() {
-        // TODO: return the cells. Think about whether you hand out the field itself or a copy.
-        throw new UnsupportedOperationException("TODO");
+        return copyData(data);
     }
 
     /**
-     * Replaces all cells of this matrix.
+     * Replaces the matrix cells with a copy of the given array.
      *
-     * <p>{@code GameOfLife.step()} uses this method to install the next generation.</p>
-     *
-     * @param data the new cells, must be non-null, rectangular and at least 1x1
-     * @throws IllegalArgumentException if {@code data} is not a legal matrix body
+     * @param data the replacement matrix values
+     * @throws IllegalArgumentException if the array is null, empty,
+     *         contains a null row, or is not rectangular
      */
     public void setData(int[][] data) {
-        // TODO: validate exactly like the array constructor, then store.
-        throw new UnsupportedOperationException("TODO");
+        validateData(data);
+        this.data = copyData(data);
     }
 
     /**
-     * Returns the number of rows of this matrix, i.e. the first dimension of the array.
+     * Returns the number of rows.
      *
-     * @return the row count, always at least 1
+     * @return the row count
      */
     public int getRows() {
-        // TODO: return the number of rows.
-        throw new UnsupportedOperationException("TODO");
+        return data.length;
     }
 
     /**
-     * Returns the number of columns of this matrix, i.e. the second dimension of the array.
+     * Returns the number of columns.
      *
-     * @return the column count, always at least 1
+     * @return the column count
      */
     public int getColumns() {
-        // TODO: return the number of columns.
-        throw new UnsupportedOperationException("TODO");
+        return data[0].length;
     }
 
     /**
-     * Returns the value of a single cell.
+     * Returns the value at a specified cell.
      *
-     * @param row    the row index, {@code 0 <= row < getRows()}
-     * @param column the column index, {@code 0 <= column < getColumns()}
-     * @return the value stored in that cell
-     * @throws IndexOutOfBoundsException if the coordinate is outside the matrix
+     * @param row the row index
+     * @param column the column index
+     * @return the value stored at that cell
+     * @throws IndexOutOfBoundsException if the coordinate is invalid
      */
     public int get(int row, int column) {
-        // TODO: bounds-check the coordinate and return the cell.
-        throw new UnsupportedOperationException("TODO");
+        checkBounds(row, column);
+        return data[row][column];
     }
 
     /**
-     * Stores a value in a single cell.
+     * Stores a value at a specified cell.
      *
-     * @param row    the row index, {@code 0 <= row < getRows()}
-     * @param column the column index, {@code 0 <= column < getColumns()}
-     * @param value  the value to store
-     * @throws IndexOutOfBoundsException if the coordinate is outside the matrix
+     * @param row the row index
+     * @param column the column index
+     * @param value the value to store
+     * @throws IndexOutOfBoundsException if the coordinate is invalid
      */
     public void set(int row, int column, int value) {
-        // TODO: bounds-check the coordinate and write the cell.
-        throw new UnsupportedOperationException("TODO");
+        checkBounds(row, column);
+        data[row][column] = value;
+    }
+
+    /**
+     * Checks whether an array is a valid rectangular matrix.
+     *
+     * @param values the array to validate
+     * @throws IllegalArgumentException if the array is invalid
+     */
+    private void validateData(int[][] values) {
+        if (values == null || values.length == 0
+                || values[0] == null || values[0].length == 0) {
+            throw new IllegalArgumentException(
+                    "Matrix data must have at least one row and column.");
+        }
+
+        int columns = values[0].length;
+
+        for (int[] row : values) {
+            if (row == null || row.length != columns) {
+                throw new IllegalArgumentException(
+                        "Matrix data must be rectangular.");
+            }
+        }
+    }
+
+    /**
+     * Creates a deep copy of a two-dimensional array.
+     *
+     * @param values the array to copy
+     * @return a copy containing independent row arrays
+     */
+    private int[][] copyData(int[][] values) {
+        int[][] result = new int[values.length][];
+
+        for (int row = 0; row < values.length; row++) {
+            result[row] = values[row].clone();
+        }
+
+        return result;
+    }
+
+    /**
+     * Checks whether a cell coordinate is within the matrix.
+     *
+     * @param row the row index
+     * @param column the column index
+     * @throws IndexOutOfBoundsException if either index is invalid
+     */
+    private void checkBounds(int row, int column) {
+        if (row < 0 || row >= getRows()
+                || column < 0 || column >= getColumns()) {
+            throw new IndexOutOfBoundsException(
+                    "Cell coordinate is outside the matrix.");
+        }
     }
 }
